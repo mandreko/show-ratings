@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { Container, Header } from 'semantic-ui-react'
+import { Container, Header, Placeholder } from 'semantic-ui-react'
 import SearchBar from './SearchBar';
 import ShowResults from './ShowResults';
 import ShowChart from './ShowChart';
@@ -46,9 +46,16 @@ class App extends React.Component {
   includeChart = () => {
     var chart;
     if (Object.keys(this.state.chartData).length !== 0) {
-      chart = <ShowChart showRatingsData={this.state.chartData} loading={this.state.chartDataLoading}  />;
+      chart = <ShowChart showRatingsData={this.state.chartData} />;
     }
+  
     return chart;
+  }
+
+  includePlaceholder = () => {
+    if (this.state.chartDataLoading) {
+      return <Placeholder style={{ width: 650, height: 250 }}><Placeholder.Image square /></Placeholder>;
+    }
   }
 
   handleCreateChart = seriesId => {
@@ -77,6 +84,7 @@ class App extends React.Component {
         <p></p>
         <ShowResults showData={this.state.showList} chartButtonClick={this.handleCreateChart} marginTop="1em" />
         <p></p>
+        { this.includePlaceholder() }
         {/* Only render the chart if it has data, otherwise it'll error, and is needless */}
         { this.includeChart() }
         
