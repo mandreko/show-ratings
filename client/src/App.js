@@ -13,7 +13,7 @@ class App extends React.Component {
     this.state = {
       filteredShow: '',
       showList: [],
-      chartData: [],
+      chartData: {},
       showListLoading: false,
       chartDataLoading: false
     };
@@ -28,7 +28,7 @@ class App extends React.Component {
 
   filterShow = debounce((searchText) => {
     this.setState({ showListLoading: true });
-    this.setState({ chartData: []});
+    this.setState({ chartData: {}});
     axios.get('/api/search', {
       params: {
         q: searchText
@@ -42,12 +42,20 @@ class App extends React.Component {
       })
   }, 1000);
 
+  // Chart creation functions
+  includeChart = () => {
+    var chart;
+    if (Object.keys(this.state.chartData).length !== 0) {
+      chart = <ShowChart showRatingsData={this.state.chartData} loading={this.state.chartDataLoading}  />;
+    }
+    return chart;
+  }
+
   handleCreateChart = seriesId => {
     this.setState({ showList: []});
     this.setState({ chartDataLoading: true });
     
-    //alert('chart being created for series id: ' + seriesId);
-    axios.get('/api/graph', {
+    axios.get('/api/graph2', {
       params: {
         series_id: seriesId
       }
@@ -69,7 +77,9 @@ class App extends React.Component {
         <p></p>
         <ShowResults showData={this.state.showList} chartButtonClick={this.handleCreateChart} marginTop="1em" />
         <p></p>
-        <ShowChart showRatingsData={this.state.chartData} loading={this.state.chartDataLoading}  />
+        {/* Only render the chart if it has data, otherwise it'll error, and is needless */}
+        { this.includeChart() }
+        
       </Container>
     );
   }

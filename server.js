@@ -72,6 +72,71 @@ app.get("/api/search", async (req, res) => {
 
 });
 
+app.get("/api/graph2", (req, res) => {
+  const series_id = req.query.series_id;
+
+  if (!series_id) {
+    res.json({
+      error: "Missing required parameter `series_id`"
+    });
+    return;
+  }
+
+  tvdb.getEpisodesBySeriesId(series_id)
+  .then(response => {
+    
+    // find the number of seasons
+    const seasons = [...new Set(response.filter(x => x.airedSeason != 0).map(item => item.airedSeason))].sort((a, b) => a - b);
+    console.log('Found seasons: ' + seasons.join());
+    const labels = seasons.map(item => 'Season ' + item);
+
+    // find the number of episodes
+    const episodes = [...new Set(response.filter(x => x.airedSeason != 0).map(item => item.airedEpisodeNumber))].filter(x => x != 0).sort((a, b) => a - b);
+    console.log('Found episodes: ' + episodes.join());
+
+    var datasets = [];
+    // loop over each episode to create an array of ratings per season
+    for (let e=0; e<episodes.length; e++) {
+      var temp_dataset = {
+              label: 'Episode ' + (e+1),
+              backgroundColor: 'rgba(255,99,132,0.2)',
+              borderColor: 'rgba(255,99,132,1)',
+              borderWidth: 1,
+              hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+              hoverBorderColor: 'rgba(255,99,132,1)',
+              data: [],
+              labels: []
+            }
+      //console.log('Sorting values for episode ' + episodes[i]);
+      for (let s=0; s<seasons.length; s++) {
+        console.log('Finding episode S' + (s+1) + 'E' + (e+1));
+        var x = response.filter(x => x.airedSeason == (s+1) && x.airedEpisodeNumber == (e+1));
+        //console.log(x[0].episodeName);
+        if (x.length > 0) {
+          temp_dataset.data.push(x[0].siteRating);
+          temp_dataset.labels.push(x[0].episodeName);
+        } else {
+          temp_dataset.data.push(0);
+          temp_dataset.labels.push('');
+        }
+      }
+
+      datasets.push(temp_dataset);
+    }
+
+    const ret = {
+      labels: labels,
+      datasets: datasets
+    };
+
+    res.json(ret);
+    //res.json(filtered_response);
+  })
+  .catch(error => {
+    console.error(error);
+  })
+})
+
 app.get("/api/graph", (req, res) => {
   const series_id = req.query.series_id;
 
@@ -90,6 +155,7 @@ app.get("/api/graph", (req, res) => {
       newObject["s"] = x.airedSeason;
       newObject["e"] = x.airedEpisodeNumber;
       newObject["r"] = x.siteRating;
+      newObject["n"] = x.episodeName;
       return newObject;
     })
 
