@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
-import { Image, Segment, Grid, GridColumn, GridRow, Header, Label, Placeholder } from "semantic-ui-react";
+import { Image, Segment, Grid, GridColumn, GridRow, Header, Label, Placeholder, Button } from "semantic-ui-react";
 
 class ShowResultsRow extends PureComponent {
 
@@ -30,20 +30,24 @@ class ShowResultsRow extends PureComponent {
     }
   }
 
+  handleChartCreate = seriesId => {
+    this.props.chartButtonClick(seriesId);
+  };
+
   render() {
     return (
       <Segment raised>
-        <Grid>
+        <Grid celled>
           <GridRow>
             <GridColumn stretched width={3}>
               {this.renderBanner()}
             </GridColumn>
-            <GridColumn width={13}>
+            <GridColumn stretched width={13}>
               <GridRow>
                 <Header as="h2">
                   {this.props.seriesName}
-                  <span class="year">{this.renderYear()}</span>
-                  <span class="labels">
+                  <span className="year">{this.renderYear()}</span>
+                  <span className="labels">
                     <Label color="grey">
                       Network
                     <Label.Detail>{this.props.network}</Label.Detail>
@@ -58,6 +62,9 @@ class ShowResultsRow extends PureComponent {
               <GridRow>
                 <span className="overview">{this.props.overview}</span>
               </GridRow>
+              <GridRow>
+                <Button primary onClick={this.handleChartCreate(this.seriesId)}>Create Chart</Button>
+              </GridRow>
             </GridColumn>
           </GridRow>
         </Grid>
@@ -66,6 +73,8 @@ class ShowResultsRow extends PureComponent {
   }
 }
 ShowResultsRow.propTypes = {
+  chartButtonClick: PropTypes.func,
+  seriesId: PropTypes.number,
   seriesName: PropTypes.string,
   banner: PropTypes.string,
   firstAired: PropTypes.string,

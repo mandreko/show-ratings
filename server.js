@@ -57,12 +57,6 @@ const getSeriesData = async function(search) {
   }
 }
 
-app.get("/api/test", async (req, res) => {
-  res.json({ 
-    thumbnail: await getThumbnail(71663)
-  });
-});
-
 app.get("/api/search", async (req, res) => {
   const search_query = req.query.q;
 

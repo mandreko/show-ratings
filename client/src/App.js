@@ -3,6 +3,7 @@ import './App.css';
 import { Container, Header } from 'semantic-ui-react'
 import SearchBar from './SearchBar';
 import ShowResults from './ShowResults';
+import ShowChart from './ShowChart';
 import axios from 'axios/index';
 import { debounce } from 'lodash';
 
@@ -12,7 +13,8 @@ class App extends React.Component {
     this.state = {
       filteredShow: '',
       showList: [],
-      loading: false
+      showListLoading: false,
+      chartDataLoading: false
     };
   }
 
@@ -23,30 +25,35 @@ class App extends React.Component {
     });
   };
 
-  filterShow = debounce((searchText, maxResults) => {
-    this.setState({ loading: true });
+  filterShow = debounce((searchText) => {
+    this.setState({ showListLoading: true });
     axios.get('/api/search', {
       params: {
         q: searchText
       }
     })
       .then((res) => {
-        // TODO: Do something with the responses to show the user the show list
         if (res.data) {
           this.setState({ showList: res.data });
-          this.setState({ loading: false });
+          this.setState({ showListLoading: false });
         }
       })
   }, 1000);
+
+  handleCreateChart = seriesId => {
+    alert('chart being created for series id: ' + seriesId);
+  };
 
   render() {
     return (
       <Container style={{ marginTop: '3em' }}>
         <Header as='h1'>TV Show Ratings Graph Creator</Header>
 
-        <SearchBar textChange={this.handleSearchChange} loading={this.state.loading} />
+        <SearchBar textChange={this.handleSearchChange} loading={this.state.showListLoading} />
         <p></p>
-        <ShowResults showData={this.state.showList} marginTop="1em" />
+        <ShowResults showData={this.state.showList} chartButtonClick={this.handleCreateChart} marginTop="1em" />
+        <p></p>
+        <ShowChart showRatingsData={this.state.showData}  />
       </Container>
     );
   }

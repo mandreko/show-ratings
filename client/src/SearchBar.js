@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Form, Segment } from 'semantic-ui-react'
+import { Form, Segment } from 'semantic-ui-react'
 import PropTypes from "prop-types";
 
 class SearchBar extends React.Component {
