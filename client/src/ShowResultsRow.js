@@ -63,7 +63,7 @@ class ShowResultsRow extends PureComponent {
                 <span className="overview">{this.props.overview}</span>
               </GridRow>
               <GridRow>
-                <Button primary onClick={this.handleChartCreate(this.seriesId)}>Create Chart</Button>
+                <Button primary onClick={this.handleChartCreate(this.props.seriesId)}>Create Chart</Button>
               </GridRow>
             </GridColumn>
           </GridRow>
