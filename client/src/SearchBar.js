@@ -13,9 +13,6 @@ class SearchBar extends React.Component {
             <Form size='large'>
                 <Segment raised>
                     <Form.Input loading={this.props.loading} fluid icon='search' iconPosition='left' placeholder='TV Show Name' onChange={this.handleChange} />
-                    <Button primary fluid size='large'>
-                        Search
-                    </Button>
                 </Segment>
             </Form>
         );
