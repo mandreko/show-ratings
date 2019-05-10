@@ -13,6 +13,7 @@ class App extends React.Component {
     this.state = {
       filteredShow: '',
       showList: [],
+      chartData: [],
       showListLoading: false,
       chartDataLoading: false
     };
@@ -41,7 +42,21 @@ class App extends React.Component {
   }, 1000);
 
   handleCreateChart = seriesId => {
-    alert('chart being created for series id: ' + seriesId);
+    this.setState({ showList: []});
+    this.setState({ chartDataLoading: true });
+    
+    //alert('chart being created for series id: ' + seriesId);
+    axios.get('/api/graph', {
+      params: {
+        series_id: seriesId
+      }
+    })
+      .then((res) => {
+        if (res.data) {
+          this.setState({ chartData: res.data });
+          this.setState({ chartDataLoading: false });
+        }
+      })
   };
 
   render() {
@@ -53,7 +68,7 @@ class App extends React.Component {
         <p></p>
         <ShowResults showData={this.state.showList} chartButtonClick={this.handleCreateChart} marginTop="1em" />
         <p></p>
-        <ShowChart showRatingsData={this.state.showData}  />
+        <ShowChart showRatingsData={this.state.chartData} loading={this.state.chartDataLoading}  />
       </Container>
     );
   }
