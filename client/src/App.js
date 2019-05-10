@@ -28,6 +28,7 @@ class App extends React.Component {
 
   filterShow = debounce((searchText) => {
     this.setState({ showListLoading: true });
+    this.setState({ chartData: []});
     axios.get('/api/search', {
       params: {
         q: searchText
